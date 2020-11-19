@@ -1,7 +1,6 @@
 import router from "@/router"
 import store from "@/store"
-import Antd from "ant-design-vue"
-import "ant-design-vue/dist/antd.css"
+import componentPlugin from "./components"
 
 /**
  * @typedef {import("vue").Plugin[]} Plugins
@@ -14,7 +13,7 @@ import "ant-design-vue/dist/antd.css"
 /**
  * @type {Plugins} 插件组
  */
-const plugins = [Antd, router, store]
+const plugins = [componentPlugin, router, store]
 
 /**
  * @type {UsePlugin} 注册插件
