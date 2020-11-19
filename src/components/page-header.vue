@@ -1,5 +1,5 @@
 <template>
-  <a-page-header title="blog-home" :breadcrumb="{ routes }" class="c-header">
+  <a-page-header title="blog-home" class="c-header">
     <section class="c-icon">
       <HomeOutlined />
       <a-divider type="vertical" class="c-divider"></a-divider>
@@ -16,17 +16,6 @@ export default {
     aPageHeader: PageHeader,
     HomeOutlined,
     UnorderedListOutlined,
-  },
-  setup() {
-    const routes = [
-      {
-        path: "/",
-        breadcrumbName: "Home",
-      },
-    ];
-    return {
-      routes,
-    };
   },
 };
 </script>

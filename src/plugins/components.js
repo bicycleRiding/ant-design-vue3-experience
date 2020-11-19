@@ -1,9 +1,29 @@
-import { Button, Tag, Divider } from "ant-design-vue"
+import {
+	Button,
+	Tag,
+	Divider,
+	Menu,
+	Switch,
+	Card,
+	Row,
+	Col,
+	BackTop
+} from "ant-design-vue"
 
 /**
  * @type {import("vue").Component[]}
  */
-const components = [Button, Tag, Divider]
+const components = [
+	Button,
+	Tag,
+	Divider,
+	Menu,
+	Switch,
+	Card,
+	Row,
+	Col,
+	BackTop
+]
 
 /**
  * @type {import("vue").Plugin}
