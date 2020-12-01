@@ -1,20 +1,36 @@
 <template>
-  <page-header />
-  <c-menu @get-selected-keys="getSelectedKeys" />
-  <router-view />
-  <a-back-top />
+  <a-config-provider :locale="locale">
+    <page-header @get-selected-key="getSelectedKey" />
+
+    <router-view v-slot="{ Component }">
+      <transition name="fade" mode="out-in">
+        <component :is="Component" />
+      </transition>
+    </router-view>
+  </a-config-provider>
 </template>
 
 <script>
-import { useKeysToPage } from "@/use/menu.js";
 import pageHeader from "@/components/page-header.vue";
-import cMenu from "@/components/c-menu.vue";
+import { useRoute, useRouter } from "vue-router";
+import { ConfigProvider } from "ant-design-vue";
+import zhCN from "ant-design-vue/lib/locale-provider/zh_CN";
 export default {
-  components: { pageHeader, cMenu },
+  components: { pageHeader, aConfigProvider: ConfigProvider },
   setup() {
-    const getSelectedKeys = useKeysToPage();
+    const router = useRouter();
+
+    const getSelectedKey = (key) => {
+      router.push({
+        name: key,
+      });
+    };
+    const route = useRoute();
+
     return {
-      getSelectedKeys,
+      getSelectedKey,
+      Component: route.name,
+      locale: zhCN,
     };
   },
 };
@@ -22,4 +38,13 @@ export default {
 
 <style>
 @import url("./css/style.css");
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>

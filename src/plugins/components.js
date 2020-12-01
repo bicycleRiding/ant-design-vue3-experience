@@ -1,29 +1,14 @@
 import {
-	Button,
-	Tag,
-	Divider,
 	Menu,
-	Switch,
 	Card,
-	Row,
-	Col,
-	BackTop
+	Pagination,
+	Breadcrumb
 } from "ant-design-vue"
 
 /**
  * @type {import("vue").Component[]}
  */
-const components = [
-	Button,
-	Tag,
-	Divider,
-	Menu,
-	Switch,
-	Card,
-	Row,
-	Col,
-	BackTop
-]
+const components = [Menu, Card, Pagination, Breadcrumb]
 
 /**
  * @type {import("vue").Plugin}
