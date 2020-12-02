@@ -4,7 +4,9 @@
 
     <router-view v-slot="{ Component }">
       <transition name="fade" mode="out-in">
-        <component :is="Component" />
+        <keep-alive>
+          <component :is="Component" />
+        </keep-alive>
       </transition>
     </router-view>
   </a-config-provider>

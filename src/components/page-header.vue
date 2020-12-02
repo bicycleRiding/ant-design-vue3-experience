@@ -59,5 +59,6 @@ export default {
 
 .c-header-title {
   color: white;
+  padding-top: 5px;
 }
 </style>

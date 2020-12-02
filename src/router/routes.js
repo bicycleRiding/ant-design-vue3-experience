@@ -20,6 +20,11 @@ const routes = [
 		name: "读书",
 		path: "/books",
 		component: () => import("@/views/Books.vue")
+	},
+	{
+		path: "/:pathMatch(.*)",
+		name: "无此资源",
+		component: () => import("@/views/NotFound.vue")
 	}
 ]
 
