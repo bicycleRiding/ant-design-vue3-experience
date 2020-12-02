@@ -12,7 +12,9 @@
     "core-js": "^3.6.5",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
-    "vuex": "^4.0.0-0"
+    "vuex": "^4.0.0-0",
+    "wangeditor": "^4.5.2",
+    "xss": "^1.0.8"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

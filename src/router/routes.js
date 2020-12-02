@@ -22,6 +22,11 @@ const routes = [
 		component: () => import("@/views/Books.vue")
 	},
 	{
+		name: "编辑",
+		path: "/editor",
+		component: () => import("@/views/Editor.vue")
+	},
+	{
 		path: "/:pathMatch(.*)",
 		name: "无此资源",
 		component: () => import("@/views/NotFound.vue")
