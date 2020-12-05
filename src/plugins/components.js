@@ -3,7 +3,13 @@ import {
 	Card,
 	Pagination,
 	Breadcrumb,
-	Button
+	Button,
+	Modal,
+	Form,
+	Input,
+	Radio,
+	Drawer,
+	Popover
 } from "ant-design-vue"
 
 /**
@@ -14,7 +20,13 @@ const components = [
 	Card,
 	Pagination,
 	Breadcrumb,
-	Button
+	Button,
+	Modal,
+	Form,
+	Input,
+	Radio,
+	Drawer,
+	Popover
 ]
 
 /**

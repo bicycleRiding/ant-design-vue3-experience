@@ -9,16 +9,21 @@
         </keep-alive>
       </transition>
     </router-view>
+    <a-back-top />
   </a-config-provider>
 </template>
 
 <script>
 import pageHeader from "@/components/page-header.vue";
 import { useRoute, useRouter } from "vue-router";
-import { ConfigProvider } from "ant-design-vue";
+import { ConfigProvider, BackTop } from "ant-design-vue";
 import zhCN from "ant-design-vue/lib/locale-provider/zh_CN";
 export default {
-  components: { pageHeader, aConfigProvider: ConfigProvider },
+  components: {
+    pageHeader,
+    aConfigProvider: ConfigProvider,
+    aBackTop: BackTop,
+  },
   setup() {
     const router = useRouter();
 
