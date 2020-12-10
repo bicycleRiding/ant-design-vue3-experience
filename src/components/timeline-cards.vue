@@ -24,7 +24,7 @@
 
 <script>
 import { Timeline } from "ant-design-vue";
-import { useSetTimeLineColor } from "@/use/useTimeLine.js";
+import { useSetTimeLineColor } from "u@/timeline.js";
 
 export default {
   props: {

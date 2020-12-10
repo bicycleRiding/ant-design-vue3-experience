@@ -9,27 +9,27 @@ const routes = [
 	{
 		name: "首页",
 		path: "/",
-		component: () => import("@/views/Home.vue")
+		component: () => import("v@/Home.vue")
 	},
 	{
 		name: "日志",
 		path: "/blogs",
-		component: () => import("@/views/Blogs.vue")
+		component: () => import("v@/Blogs.vue")
 	},
 	{
 		name: "读书",
 		path: "/books",
-		component: () => import("@/views/Books.vue")
+		component: () => import("v@/Books.vue")
 	},
 	{
 		name: "编辑",
 		path: "/editor",
-		component: () => import("@/views/Editor.vue")
+		component: () => import("v@/Editor.vue")
 	},
 	{
 		path: "/:pathMatch(.*)",
 		name: "无此资源",
-		component: () => import("@/views/NotFound.vue")
+		component: () => import("v@/NotFound.vue")
 	}
 ]
 

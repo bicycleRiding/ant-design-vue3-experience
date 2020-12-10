@@ -18,8 +18,8 @@
 
 <script>
 import { ref } from "vue";
-import cTimelineCards from "@/components/timeline-cards.vue";
-import cBreadcrumbMenu from "@/components/breadcrumb-menu.vue";
+import cTimelineCards from "c@/timeline-cards.vue";
+import cBreadcrumbMenu from "c@/breadcrumb-menu.vue";
 export default {
   components: {
     cTimelineCards,
@@ -80,6 +80,7 @@ export default {
 .c-blogs {
   padding: 20px;
 }
+
 .c-blogs-footer {
   text-align: center;
   padding-bottom: 20px;

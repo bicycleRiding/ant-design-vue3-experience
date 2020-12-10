@@ -14,10 +14,11 @@
 </template>
 
 <script>
-import pageHeader from "@/components/page-header.vue";
+import pageHeader from "c@/page-header.vue";
 import { useRoute, useRouter } from "vue-router";
 import { ConfigProvider, BackTop } from "ant-design-vue";
 import zhCN from "ant-design-vue/lib/locale-provider/zh_CN";
+
 export default {
   components: {
     pageHeader,

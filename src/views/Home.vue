@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { useToPage } from "@/use/useRouter.js";
+import { useToPage } from "u@/router-fn.js";
 export default {
   setup() {
     const toPage = useToPage();

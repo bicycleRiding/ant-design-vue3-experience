@@ -1,170 +1,148 @@
 <template>
   <main>
     <div id="editor"></div>
-    <section class="c-save">
-      <a-button type="primary" @click="sumbit">发布</a-button>
+    <section class="c-button-area">
+      <a-button type="primary" @click="release">发布</a-button>
       <a-button type="danger" @click="clean">清空</a-button>
-      <a-popover title="草稿箱">
+      <a-popover title="选择">
         <template #content>
-          <p><a-button block @click="draftsShow('日志')">日志</a-button></p>
-          <p><a-button block @click="draftsShow('读书')">读书</a-button></p>
+          <p>
+            <a-button @click="switchDraftType('blog')" block>日志</a-button>
+          </p>
+          <p>
+            <a-button @click="switchDraftType('book')" block>读书</a-button>
+          </p>
         </template>
-        <a-button> 草稿箱 </a-button>
+        <a-button type="dashed">类型-{{ currentType }}</a-button>
       </a-popover>
     </section>
-    <a-modal :visible="modalStatus" title="发布文章" @cancel="handleCancel">
-      <template #footer>
-        <a-button key="back" @click="handleCancel"> 取消 </a-button>
-        <a-button type="danger" @click="handleReset">重置</a-button>
-        <a-button
-          key="submit"
-          type="primary"
-          :loading="confirmLoading"
-          @click="handleOk"
-        >
-          确定
-        </a-button>
-      </template>
-      <a-form layout="vertical" :model="modelRef">
-        <a-form-item label="标题" v-bind="validateInfos.title">
-          <a-input
-            placeholder="请输入文章标题"
-            v-model:value="modelRef.title"
-          ></a-input>
-        </a-form-item>
-        <a-form-item label="简介" v-bind="validateInfos.synopsis">
-          <a-input
-            placeholder="请输入文章简介"
-            v-model:value="modelRef.synopsis"
-          ></a-input>
-        </a-form-item>
-        <a-form-item label="文章类型">
-          <a-radio-group v-model:value="modelRef.type">
-            <a-radio value="blog"> 日志 </a-radio>
-            <a-radio value="book"> 读书 </a-radio>
-          </a-radio-group>
-        </a-form-item>
-      </a-form>
-    </a-modal>
-
-    <a-drawer
-      :visible="draftsStatus"
-      @close="draftsHidden"
-      :title="draftsTitle"
-    >
-      测试
-    </a-drawer>
   </main>
 </template>
 
 <script>
-import { useEditor } from "@/use/useEditor";
-import { usePublishNotification } from "@/use/useNotification";
-import { reactive, ref, watchEffect } from "vue";
-import { useForm } from "@ant-design-vue/use";
-
+import useEditor from "u@/editor.js";
+import { debounce } from "u@/common/fn.js";
+import useNotice from "u@/common/notice.js";
+import {
+  useIndexedDB,
+  showMember,
+  createMember,
+  updateMember,
+} from "u@/indexedDB";
+import { onMounted, ref, watch, computed } from "vue";
+import xss from "xss";
 export default {
   setup() {
+    /** 富文本域 */
     const editor = useEditor();
-    const clean = () => editor.txt.clear();
+    const protectHtml = (html) => xss(html);
+    const getSafeHtml = () => {
+      const html = editor.txt.html();
+      const safeHtml = protectHtml(html);
+      return safeHtml;
+    };
+    const setEditorTxt = (html) => {
+      console.log(html);
+      editor.txt.html(html);
+    };
+    const cleanEditorTxt = () => setEditorTxt("");
+    editor.config.onchange = debounce(() => {
+      const safeHtml = getSafeHtml();
+      updateMember(IDB, draftType.value, {
+        name: "common",
+        content: safeHtml,
+      })
+        .then(noticeSaveDraftSuccess)
+        .catch(noticeSaveDraftFail);
+    }, 3000);
 
-    const setStatus = (status, bol) => (status.value = bol);
+    /** 草稿域 */
+    const noticeDraft = (desc) => {
+      return {
+        success: useNotice("success", "草稿", desc),
+        error: useNotice("error", "草稿", desc),
+      };
+    };
+    const noticeSaveDraftSuccess = noticeDraft("已保存在本地").success;
+    const noticeSaveDraftFail = noticeDraft("保存草稿失败").error;
+    const noticeSwitchDraftSuccess = noticeDraft("切换成功").success;
+    const noticeSwitchDraftFail = noticeDraft("切换失败").error;
 
-    const draftsTitle = ref("日志");
-
-    const modalStatus = ref(false);
-    const draftsStatus = ref(false);
-    const confirmLoading = ref(false);
-
-    const modelRef = reactive({
-      title: "",
-      synopsis: "",
-      type: "blog",
+    let IDB = null;
+    const draftType = ref("blog");
+    onMounted(async () => {
+      const newObjectStoremap = new Map([
+        ["blog", "name"],
+        ["book", "name"],
+      ]);
+      IDB = await useIndexedDB("draft", newObjectStoremap);
+      const blogDraft = await showMember(IDB, "blog", "common");
+      const bookDraft = await showMember(IDB, "book", "common");
+      if (!blogDraft) {
+        await createMember(IDB, "blog", {
+          name: "common",
+          content: "",
+        });
+      } else {
+        const isBlogDraftType = draftType.value === "blog";
+        if (isBlogDraftType) {
+          const blogDraftContent = blogDraft.content;
+          setEditorTxt(blogDraftContent);
+        }
+      }
+      if (!bookDraft) {
+        await createMember(IDB, "book", {
+          name: "common",
+          content: "",
+        });
+      } else {
+        const isBookDraftType = draftType.value === "book";
+        if (isBookDraftType) {
+          const bookDraftContent = bookDraft.content;
+          setEditorTxt(bookDraftContent);
+        }
+      }
     });
-    const rulesRef = reactive({
-      title: [
-        {
-          required: true,
-          message: "标题是必填项",
-        },
-      ],
-      synopsis: [
-        {
-          required: true,
-          message: "简介是必填项",
-        },
-      ],
-    });
 
-    const { resetFields, validate, validateInfos } = useForm(
-      modelRef,
-      rulesRef
-    );
-
-    const SuccessPublishNotification = usePublishNotification(
-      "success",
-      "成功"
-    );
-    // const FailPublishNotification = usePublishNotification("error", "失败");
-    const CancelPublishNotification = usePublishNotification(
-      "info",
-      "取消发布"
-    );
-    const sumbit = () => setStatus(modalStatus, true);
-
-    // TODO 待加入请求
-    const handleOk = () => {
-      // setStatus(confirmLoading, true);
-      validate()
-        .then(() => {
-          setStatus(modalStatus, false);
-          SuccessPublishNotification();
-          setStatus(confirmLoading, false);
+    watch(draftType, (value) => {
+      showMember(IDB, value, "common")
+        .then((draft) => {
+          const draftContent = draft.content;
+          setEditorTxt(draftContent);
+          noticeSwitchDraftSuccess();
         })
-        .catch((err) => console.log(err));
-    };
-    const handleCancel = () => {
-      setStatus(modalStatus, false);
-      CancelPublishNotification();
-    };
+        .catch(noticeSwitchDraftFail);
+    });
 
-    const handleReset = resetFields;
+    /** 功能域 */
+    const release = () => console.log(getSafeHtml());
+    const clean = () => cleanEditorTxt();
+    const switchDraftType = (type) => (draftType.value = type);
+    const currentType = computed(() => {
+      const typeMap = new Map([
+        ["blog", "日志"],
+        ["book", "读书"],
+      ]);
+      return typeMap.get(draftType.value);
+    });
 
-    const draftsShow = (type) => {
-      draftsTitle.value = type;
-      setStatus(draftsStatus, true);
-    };
-    const draftsHidden = () => setStatus(draftsStatus, false);
-
-    // TODO 代写草稿箱watchEffect
-    watchEffect(() => console.log(draftsTitle.value));
     return {
-      modalStatus,
-      confirmLoading,
-      sumbit,
-      handleOk,
-      handleCancel,
-      handleReset,
+      release,
       clean,
-      modelRef,
-      validateInfos,
-      draftsShow,
-      draftsStatus,
-      draftsHidden,
-      draftsTitle,
+      switchDraftType,
+      currentType,
     };
   },
 };
 </script>
 
 <style scoped>
-.c-save {
+.c-button-area {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
-.c-save >>> .ant-btn {
+.c-button-area >>> .ant-btn {
   margin: 5px;
 }
 </style>
